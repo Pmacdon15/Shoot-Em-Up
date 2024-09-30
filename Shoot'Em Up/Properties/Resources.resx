@@ -140,12 +140,12 @@
     <value>..\Resources\playerTransparent.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="bulletTransparent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bulletTransparent.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Resources\bullettransparent1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="playerTransparentL" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\playerTransparentL.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="bullettransparent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\bullettransparent1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="gunshot" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\gunshot.wav;System.IO.MemoryStream, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
