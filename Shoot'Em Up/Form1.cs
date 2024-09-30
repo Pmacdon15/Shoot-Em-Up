@@ -9,6 +9,11 @@ namespace Shoot_Em_Up
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            
+        }
+
+        private void button_start_game_Click(object sender, EventArgs e)
+        {
             TestLevel form = new TestLevel();
             form.Show();
         }
