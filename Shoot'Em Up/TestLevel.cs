@@ -107,14 +107,7 @@ namespace Shoot_Em_Up
             bullets.Add(bullet);
 
             // Adjust bullet movement direction based on player facing direction
-            if (facingRight)
-            {
-                bullet.Tag = 10; // Move to the right
-            }
-            else
-            {
-                bullet.Tag = -10  ; // Move to the left
-            }
+            bullet.Tag = facingRight ? 0.01 : -0.01; // Use percentage for movement
         }
 
         private void BulletTimer_Tick(object? sender, EventArgs e)
@@ -122,7 +115,8 @@ namespace Shoot_Em_Up
             for (int i = bullets.Count - 1; i >= 0; i--)
             {
                 PictureBox bullet = bullets[i];
-                bullet.Left += (int)bullet.Tag; // Move bullet based on its Tag
+                int moveDistance = (int)(this.Width * (double)bullet.Tag); // Calculate movement distance based on form width
+                bullet.Left += moveDistance; // Move bullet based on calculated distance
 
                 if (bullet.Left < 0 || bullet.Left > this.Width) // Check if the bullet is off the screen
                 {
@@ -132,5 +126,6 @@ namespace Shoot_Em_Up
                 }
             }
         }
+
     }
 }
