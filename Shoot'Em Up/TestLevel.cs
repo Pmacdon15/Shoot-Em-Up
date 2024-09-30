@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Media;
 using System.Windows.Forms;
 
 namespace Shoot_Em_Up
@@ -20,6 +21,7 @@ namespace Shoot_Em_Up
             bulletTimer.Interval = 10;
             bulletTimer.Tick += BulletTimer_Tick;
             bulletTimer.Start();
+            //soundPlayer = new SoundPlayer(Properties.Resources.gunshot);
         }
 
         private void TestLevel_Load(object sender, EventArgs e)
