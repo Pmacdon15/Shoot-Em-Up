@@ -38,7 +38,7 @@
             pictureBox_Player1.ErrorImage = Properties.Resources.playerTransparentR;
             pictureBox_Player1.Image = Properties.Resources.playerTransparentL;
             pictureBox_Player1.InitialImage = Properties.Resources.player;
-            pictureBox_Player1.Location = new Point(2585, 916);
+            pictureBox_Player1.Location = new Point(2139, 620);
             pictureBox_Player1.Name = "pictureBox_Player1";
             pictureBox_Player1.Size = new Size(117, 183);
             pictureBox_Player1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -50,10 +50,13 @@
             AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImageLayout = ImageLayout.Center;
-            ClientSize = new Size(2828, 1152);
+            ClientSize = new Size(3080, 1395);
+            ControlBox = false;
             Controls.Add(pictureBox_Player1);
+            MinimizeBox = false;
             Name = "TestLevel";
             Text = "TexstLevel";
+            WindowState = FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)pictureBox_Player1).EndInit();
             ResumeLayout(false);
         }

@@ -11,6 +11,7 @@ namespace Shoot_Em_Up
         private System.Windows.Forms.Timer bulletTimer = new System.Windows.Forms.Timer();
         private List<PictureBox> bullets = new List<PictureBox>();
         private bool isFacingRight = true; // Track the player's facing direction
+        private SoundPlayer soundPlayer;
 
         public TestLevel()
         {
@@ -21,7 +22,7 @@ namespace Shoot_Em_Up
             bulletTimer.Interval = 10;
             bulletTimer.Tick += BulletTimer_Tick;
             bulletTimer.Start();
-            //soundPlayer = new SoundPlayer(Properties.Resources.gunshot);
+            soundPlayer = new SoundPlayer(Properties.Resources.gunshot);
         }
 
         private void TestLevel_Load(object sender, EventArgs e)
@@ -30,42 +31,67 @@ namespace Shoot_Em_Up
 
         private void TestLevel_KeyDown(object? sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Right)
-            {
-                int moveDistance = (int)(this.Width * 0.05);
-                pictureBox_Player1.Left += moveDistance;
-                pictureBox_Player1.Image = Properties.Resources.playerTransparentR;
-                isFacingRight = true; // Update direction
-            }
-
-            if (e.KeyCode == Keys.Left)
-            {
-                int moveDistance = (int)(this.Width * 0.05);
-                pictureBox_Player1.Left -= moveDistance;
-                pictureBox_Player1.Image = Properties.Resources.playerTransparentL;
-                isFacingRight = false; // Update direction
-            }
-
-            if (e.KeyCode == Keys.Up)
-            {
-                int moveDistance = (int)(this.Height * 0.05);
-                pictureBox_Player1.Top -= moveDistance;
-            }
-
-            if (e.KeyCode == Keys.Down)
-            {
-                int moveDistance = (int)(this.Height * 0.05);
-                pictureBox_Player1.Top += moveDistance;
-            }
-
+            HandlePlayerMovement(e.KeyCode);
             if (e.KeyCode == Keys.Space)
             {
-                ShootBullet(isFacingRight); // Pass the direction when shooting
+                ShootBullet(isFacingRight);
             }
+        }
+
+        private void HandlePlayerMovement(Keys keyCode)
+        {
+            int moveDistance = GetMoveDistance(keyCode);
+            switch (keyCode)
+            {
+                case Keys.Right:
+                    MovePlayerRight(moveDistance);
+                    break;
+                case Keys.Left:
+                    MovePlayerLeft(moveDistance);
+                    break;
+                case Keys.Up:
+                    MovePlayerUp(moveDistance);
+                    break;
+                case Keys.Down:
+                    MovePlayerDown(moveDistance);
+                    break;
+            }
+        }
+
+        private int GetMoveDistance(Keys keyCode)
+        {
+            return keyCode == Keys.Right || keyCode == Keys.Left
+                ? (int)(this.Width * 0.05)
+                : (int)(this.Height * 0.05);
+        }
+
+        private void MovePlayerRight(int moveDistance)
+        {
+            pictureBox_Player1.Left += moveDistance;
+            pictureBox_Player1.Image = Properties.Resources.playerTransparentR;
+            isFacingRight = true;
+        }
+
+        private void MovePlayerLeft(int moveDistance)
+        {
+            pictureBox_Player1.Left -= moveDistance;
+            pictureBox_Player1.Image = Properties.Resources.playerTransparentL;
+            isFacingRight = false;
+        }
+
+        private void MovePlayerUp(int moveDistance)
+        {
+            pictureBox_Player1.Top -= moveDistance;
+        }
+
+        private void MovePlayerDown(int moveDistance)
+        {
+            pictureBox_Player1.Top += moveDistance;
         }
 
         private void ShootBullet(bool facingRight)
         {
+            soundPlayer.Play();
             int bulletX = pictureBox_Player1.Left + (pictureBox_Player1.Width / 2) - (Properties.Resources.bullet_transparent.Width / 2);
             int bulletY = pictureBox_Player1.Top + (pictureBox_Player1.Height / 2) - (Properties.Resources.bullet_transparent.Height / 2);
 
