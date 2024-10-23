@@ -14,7 +14,8 @@ namespace Shoot_Em_Up
 
         private void button_start_game_Click(object sender, EventArgs e)
         {
-            TestLevel form = new TestLevel();
+            //TestLevel form = new TestLevel();
+            GamePlay form = new GamePlay();
             form.Show();
         }
     }
