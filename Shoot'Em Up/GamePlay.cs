@@ -27,7 +27,7 @@ namespace Shoot_Em_Up
             GameLoop.Interval = 24;
             GameLoop.Start();
 
-            this.Size = new Size(1200, 900);
+            this.Size = new Size(this.Width, this.Height);
             this.FormBorderStyle = FormBorderStyle.Fixed3D;
             this.BackColor = Color.Black;
             this.Paint += new PaintEventHandler(PaintObjects);
@@ -35,7 +35,9 @@ namespace Shoot_Em_Up
 
         protected void PaintObjects(object sender, PaintEventArgs e)
         {
-            Rectangle rectangle = new Rectangle(100, 100, 1000, 700);
+            int rectWidth = (int)(this.Width * 0.95);
+            int rectHeight = (int)(this.Height * 0.80);
+            Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
             e.Graphics.DrawRectangle(Pens.White, rectangle);
 
             Region clippingRegion = new Region(rectangle);
@@ -71,7 +73,7 @@ namespace Shoot_Em_Up
 
         private void GameLoop_Tick(object sender, EventArgs e)
         {
-            player.Move(100, 1100, 100, 800);
+            player.Move(100, (int)(this.Width * 0.98), 100, (int)(this.Height * 0.80));
             this.Refresh();
         }
 

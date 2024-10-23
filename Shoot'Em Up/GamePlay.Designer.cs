@@ -43,7 +43,10 @@
             ClientSize = new Size(800, 450);
             Name = "GamePlay";
             Text = "GamePlay";
+            WindowState = FormWindowState.Maximized;
             Load += GamePlay_Load;
+            KeyUp += GamePlay_KeyUp;
+            PreviewKeyDown += GamePlay_PreviewKeyDown;
             ResumeLayout(false);
         }
 
