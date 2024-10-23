@@ -41,7 +41,10 @@
             AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            ControlBox = false;
+            FormBorderStyle = FormBorderStyle.None;
             Name = "GamePlay";
+            SizeGripStyle = SizeGripStyle.Hide;
             Text = "GamePlay";
             WindowState = FormWindowState.Maximized;
             Load += GamePlay_Load;

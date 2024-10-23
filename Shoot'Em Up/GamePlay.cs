@@ -14,7 +14,7 @@ namespace Shoot_Em_Up
     public partial class GamePlay : Form
     {
         //Ship player = new Ship(new Point(550, 350));
-        StickMan player = new StickMan(new Point(550, 350));
+        StickMan player = new StickMan(new Point(550, 350));        
 
         public GamePlay()
         {
@@ -28,7 +28,7 @@ namespace Shoot_Em_Up
             GameLoop.Start();
 
             this.Size = new Size(this.Width, this.Height);
-            this.FormBorderStyle = FormBorderStyle.Fixed3D;
+            this.FormBorderStyle = FormBorderStyle.None;
             this.BackColor = Color.Black;
             this.Paint += new PaintEventHandler(PaintObjects);
         }
@@ -43,12 +43,11 @@ namespace Shoot_Em_Up
             Region clippingRegion = new Region(rectangle);
             e.Graphics.Clip = clippingRegion;
 
-            player.Draw(e);
-            //StickMan.Draw(e);
+            player.Draw(e, player.FacingRight);
 
             e.Graphics.ResetClip();
 
-            e.Graphics.DrawString("Score: 0", new Font("Arial", 12, FontStyle.Regular), Brushes.White, 10, 20);
+            e.Graphics.DrawString("Score: 0", new Font("Arial", 12, FontStyle.Regular), Brushes.Gold, 10, 20);
         }
 
         private void GamePlay_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -56,10 +55,13 @@ namespace Shoot_Em_Up
             if (e.KeyCode == Keys.Left)
             {
                 player.MoveX = -5;
+                player.FacingRight = false;
             }
             if (e.KeyCode == Keys.Right)
             {
                 player.MoveX = +5;
+                player.FacingRight = true;
+
             }
             if (e.KeyCode == Keys.Up)
             {
@@ -73,7 +75,11 @@ namespace Shoot_Em_Up
 
         private void GameLoop_Tick(object sender, EventArgs e)
         {
-            player.Move(100, (int)(this.Width * 0.98), 100, (int)(this.Height * 0.80));
+            int rectWidth = (int)(this.Width * 0.91);
+            int rectHeight = (int)(this.Height * 0.73);
+            Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
+
+            player.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
             this.Refresh();
         }
 

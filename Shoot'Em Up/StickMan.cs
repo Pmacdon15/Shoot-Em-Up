@@ -8,28 +8,50 @@ namespace Shoot_Em_Up
 {
     internal class StickMan : Asset
     {
+        public bool FacingRight;
+
         public StickMan(Point center)
         {
             Center = center;
+            FacingRight = true;
         }
 
-        public override void Draw(PaintEventArgs e)
+        public override void Draw(PaintEventArgs e, bool isFacingRight)
         {
             Pen pen = new Pen(Color.DarkGray, 2);
             Graphics g = e.Graphics;
 
-            // Draw head
-            g.DrawEllipse(pen, Center.X - 20, Center.Y - 60, 40, 40);
+            // Draw head (20% bigger)
+            g.DrawEllipse(pen, Center.X - 12, Center.Y - 36, 24, 24);
 
-            // Draw body
-            g.DrawLine(pen, Center.X, Center.Y - 20, Center.X, Center.Y + 60);
+            // Draw body (20% longer)
+            g.DrawLine(pen, Center.X, Center.Y - 12, Center.X, Center.Y + 36);
 
-            // Draw arms
-            g.DrawLine(pen, Center.X - 40, Center.Y, Center.X + 40, Center.Y);
+            // Draw arms (20% longer)
+            g.DrawLine(pen, Center.X - 24, Center.Y, Center.X + 24, Center.Y);
 
-            // Draw legs
-            g.DrawLine(pen, Center.X, Center.Y + 60, Center.X - 30, Center.Y + 120);
-            g.DrawLine(pen, Center.X, Center.Y + 60, Center.X + 30, Center.Y + 120);
+            // Draw legs (20% longer)
+            g.DrawLine(pen, Center.X, Center.Y + 36, Center.X - 18, Center.Y + 72);
+            g.DrawLine(pen, Center.X, Center.Y + 36, Center.X + 18, Center.Y + 72);
+
+            if (isFacingRight == true)
+            {
+                // Draw gun in right hand
+                g.DrawLine(pen, Center.X + 24, Center.Y, Center.X + 34, Center.Y - 5);
+                g.DrawRectangle(pen, Center.X + 34, Center.Y - 8, 10, 6);
+
+                // Draw gun handle
+                g.DrawLine(pen, Center.X + 34, Center.Y - 5, Center.X + 34, Center.Y + 5);
+            }
+            else
+            {
+                // Draw gun in left hand
+                g.DrawLine(pen, Center.X - 24, Center.Y, Center.X - 34, Center.Y - 5);
+                g.DrawRectangle(pen, Center.X - 44, Center.Y - 8, 10, 6);
+
+                // Draw gun handle
+                g.DrawLine(pen, Center.X - 34, Center.Y - 5, Center.X - 34, Center.Y + 5);
+            }
         }
     }
 }
