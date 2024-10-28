@@ -52,6 +52,11 @@ namespace Shoot_Em_Up
                 // Draw gun handle
                 g.DrawLine(pen, Center.X - 34, Center.Y - 5, Center.X - 34, Center.Y + 5);
             }
+
+            // Adjusted collision rectangle to be lower
+            Collision = new Rectangle(Center.X - 24, Center.Y - 36, 48, 110);
+            Pen redPen = new Pen(Color.Red, 2); // Create a new pen for the red rectangle
+            e.Graphics.DrawRectangle(redPen, Collision);
         }
     }
 }
