@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Shoot_Em_Up
 {
+
     internal class StickMan : Asset
     {
         public bool FacingRight;
@@ -56,7 +57,7 @@ namespace Shoot_Em_Up
             // Adjusted collision rectangle to be lower
             Collision = new Rectangle(Center.X - 24, Center.Y - 36, 48, 110);
             Pen redPen = new Pen(Color.Red, 2); // Create a new pen for the red rectangle
-            e.Graphics.DrawRectangle(redPen, Collision);
+            //e.Graphics.DrawRectangle(redPen, Collision);
         }
         public bool CollisionCheck(SuicideBomber player)
         {

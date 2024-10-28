@@ -21,6 +21,7 @@ namespace Shoot_Em_Up
         StickMan Player = new StickMan(new Point(550, 350));
         //List<StickMan> Enemies = new List<StickMan>();
         List<SuicideBomber> Enemies = new List<SuicideBomber>();
+        Explosion explosion = null;
 
         public GamePlay()
         {
@@ -90,8 +91,11 @@ namespace Shoot_Em_Up
                 if (Player.CollisionCheck(enemy))
                 {
                     Collision--;
+                    explosion = new Explosion { Center = enemy.Center };
                     Enemies.RemoveAt(i);
                 }
+                // Draw explosion if it's active
+                explosion?.Draw(e, enemy.FacingRight);
             }
 
             e.Graphics.ResetClip();
@@ -106,8 +110,7 @@ namespace Shoot_Em_Up
             Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
 
             Player.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
-            
-            //foreach (StickMan enemy in Enemies)
+
             foreach (SuicideBomber enemy in Enemies)
             {
                 // Calculate the direction towards the player
@@ -127,6 +130,13 @@ namespace Shoot_Em_Up
 
                 // Move the enemy within boundaries
                 enemy.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
+            }
+
+            Counter++;
+            if (Counter > 59)
+            {
+                Counter = 0;
+                explosion = null; // Remove the explosion
             }
 
             this.Refresh();
