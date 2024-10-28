@@ -19,7 +19,8 @@ namespace Shoot_Em_Up
         int Counter;
        
         StickMan Player = new StickMan(new Point(550, 350));
-        List<StickMan> Enemies = new List<StickMan>();
+        //List<StickMan> Enemies = new List<StickMan>();
+        List<SuicideBomber> Enemies = new List<SuicideBomber>();
 
         public GamePlay()
         {
@@ -45,8 +46,8 @@ namespace Shoot_Em_Up
             {
                 int x = random.Next(0, (int)(this.Width - (this.Width * 0.2)));
                 int y = random.Next(0, (int)(this.Height - (this.Height * 0.2)));
-
-                StickMan enemy = new StickMan(new Point(x, y));
+                SuicideBomber enemy = new SuicideBomber(new Point(x, y));
+                //StickMan enemy = new StickMan(new Point(x, y));
 
                 //// Set initial movement based on position
                 enemy.MoveX = (x > 550) ? movement[random.Next(movement.Length)] : movement2[random.Next(movement2.Length)];
@@ -79,8 +80,10 @@ namespace Shoot_Em_Up
 
             for (int i = Enemies.Count - 1; i >= 0; i--)
             {
-                StickMan enemy = Enemies[i];          
-                
+                //StickMan enemy = Enemies[i];
+                SuicideBomber enemy = Enemies[i];
+
+
 
                 enemy.Draw(e, enemy.FacingRight);
 
@@ -104,7 +107,8 @@ namespace Shoot_Em_Up
 
             Player.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
             
-            foreach (StickMan enemy in Enemies)
+            //foreach (StickMan enemy in Enemies)
+            foreach (SuicideBomber enemy in Enemies)
             {
                 // Calculate the direction towards the player
                 int deltaX = Player.Center.X - enemy.Center.X;
