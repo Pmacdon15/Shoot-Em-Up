@@ -84,6 +84,19 @@ namespace Shoot_Em_Up
             List<SuicideBomber> enemiesToRemove = new List<SuicideBomber>();
             List<Bullet> bulletsToRemove = new List<Bullet>();
 
+            
+            // Draw explosions
+            foreach (var explosion in Explosions)
+            {
+                explosion.Draw(e, Player.FacingRight);
+            }
+
+            // Draw bullets
+            foreach (Bullet bullet in Bullets)
+            {
+                bullet.Draw(e, Player.FacingRight);
+            }
+
             for (int i = Enemies.Count - 1; i >= 0; i--)
             {
                 SuicideBomber enemy = Enemies[i];
@@ -100,6 +113,16 @@ namespace Shoot_Em_Up
                 }
 
                 //Check if enemy is is in explosion radius
+                foreach (var explosion in Explosions)
+                {
+                    if (explosion.CheckCollision(enemy))
+                    {
+                        Score++;
+                        Explosions.Add(explosion); // Add explosion to the list
+                        enemiesToRemove.Add(enemy);
+                        break;
+                    }
+                }
                 // Check for bullet collision with enemy
                 for (int j = Bullets.Count - 1; j >= 0; j--)
                 {
@@ -119,18 +142,6 @@ namespace Shoot_Em_Up
             // Remove collided enemies and bullets after the loop
             foreach (var enemy in enemiesToRemove) Enemies.Remove(enemy);
             foreach (var bullet in bulletsToRemove) Bullets.Remove(bullet);
-
-            // Draw explosions
-            foreach (var explosion in Explosions)
-            {
-                explosion.Draw(e, Player.FacingRight);
-            }
-
-            // Draw bullets
-            foreach (Bullet bullet in Bullets)
-            {
-                bullet.Draw(e, Player.FacingRight);
-            }
 
             e.Graphics.ResetClip();
 
