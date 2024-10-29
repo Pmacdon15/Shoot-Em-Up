@@ -21,8 +21,7 @@ namespace Shoot_Em_Up
         StickMan Player = new StickMan(new Point(550, 350));
         //List<StickMan> Enemies = new List<StickMan>();
         List<SuicideBomber> Enemies = new List<SuicideBomber>();
-        Explosion explosion = null;
-
+        List<Explosion> Explosions = new List<Explosion>();
         List<Bullet> Bullets = new List<Bullet>();
         public GamePlay()
         {
@@ -94,11 +93,13 @@ namespace Shoot_Em_Up
                 if (Player.CollisionCheck(enemy))
                 {
                     Score--;
-                    explosion = new Explosion { Center = enemy.Center };
+                    Explosion explosion = new Explosion { Center = enemy.Center };
+                    Explosions.Add(explosion); // Add explosion to the list
                     enemiesToRemove.Add(enemy);
                     continue;
                 }
 
+                //Check if enemy is is in explosion radius
                 // Check for bullet collision with enemy
                 for (int j = Bullets.Count - 1; j >= 0; j--)
                 {
@@ -106,7 +107,8 @@ namespace Shoot_Em_Up
                     if (bullet.CheckCollision(enemy))
                     {
                         Score++;
-                        explosion = new Explosion { Center = enemy.Center };
+                        Explosion explosion = new Explosion { Center = enemy.Center };
+                        Explosions.Add(explosion); // Add explosion to the list
                         enemiesToRemove.Add(enemy);
                         bulletsToRemove.Add(bullet);
                         break;
@@ -118,8 +120,8 @@ namespace Shoot_Em_Up
             foreach (var enemy in enemiesToRemove) Enemies.Remove(enemy);
             foreach (var bullet in bulletsToRemove) Bullets.Remove(bullet);
 
-            // Draw explosion if active
-            if (explosion != null)
+            // Draw explosions
+            foreach (var explosion in Explosions)
             {
                 explosion.Draw(e, Player.FacingRight);
             }
@@ -166,14 +168,13 @@ namespace Shoot_Em_Up
                 // Move the enemy within boundaries
                 enemy.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
             }
-
-            // Remove explosion after a certain duration
-            Counter++;
-            if (Counter > 30) // Reduce count for faster explosion removal
+            // Remove explosion after a certain duration      
+            for (int i = Explosions.Count - 1; i >= 0; i--)
             {
-                Counter = 0;
-                explosion = null; // Remove the explosion after 30 ticks (adjust as needed)
+                Explosions[i].Counter += 1;
+                if (Explosions[i].Counter >= 30) Explosions.RemoveAt(i);
             }
+            
 
             // Move bullets and check for boundary conditions
             for (int i = Bullets.Count - 1; i >= 0; i--)

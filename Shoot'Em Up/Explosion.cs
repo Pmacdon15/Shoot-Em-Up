@@ -7,6 +7,7 @@ namespace Shoot_Em_Up
     internal class Explosion : Asset
     {
         private int explosionRadius = 100; // Increased radius for a larger explosion
+        public int Counter=0;
 
         public override void Draw(PaintEventArgs e, bool isFacingRight)
         {
@@ -53,9 +54,9 @@ namespace Shoot_Em_Up
             // g.DrawEllipse(collisionPen, Collision); // Uncomment to view collision boundary
         }
 
-        public bool CollisionCheck(Rectangle target)
+        public bool CheckCollision(Asset other)
         {
-            return Collision.IntersectsWith(target);
+            return this.Collision.IntersectsWith(other.Collision);
         }
     }
 }

@@ -59,13 +59,9 @@ namespace Shoot_Em_Up
             Pen redPen = new Pen(Color.Red, 2); // Create a new pen for the red rectangle
             //e.Graphics.DrawRectangle(redPen, Collision);
         }
-        public bool CollisionCheck(SuicideBomber player)
+        public bool CollisionCheck(Asset other)
         {
-            if (Collision.IntersectsWith(player.Collision))
-            {
-                return true;
-            }
-            return false;
+            return this.Collision.IntersectsWith(other.Collision);
         }
         public Bullet Shoot()
         {
