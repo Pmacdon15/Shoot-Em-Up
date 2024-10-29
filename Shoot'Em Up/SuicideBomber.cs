@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.Drawing;
+using System.Windows.Forms;
+// Chat gpt was used here to help with the darwing of the man and vest
 namespace Shoot_Em_Up
 {
-
-    internal class StickMan : Asset
+    internal class SuicideBomber : Asset
     {
         public bool FacingRight;
 
-        public StickMan(Point center)
+        public SuicideBomber(Point center)
         {
             Center = center;
             FacingRight = true;
@@ -35,40 +32,46 @@ namespace Shoot_Em_Up
             g.DrawLine(pen, Center.X, Center.Y + 36, Center.X - 18, Center.Y + 72);
             g.DrawLine(pen, Center.X, Center.Y + 36, Center.X + 18, Center.Y + 72);
 
-            if (isFacingRight == true)
+            // Draw bomb vest around body
+            Brush vestBrush = new SolidBrush(Color.Brown);
+            g.FillRectangle(vestBrush, Center.X - 15, Center.Y - 12, 30, 50); // Vest outline
+            g.DrawRectangle(Pens.Black, Center.X - 15, Center.Y - 12, 30, 50);
+
+            // Draw small explosive packs within vest
+            Brush packBrush = new SolidBrush(Color.Red);
+            int packWidth = 8, packHeight = 12;
+            g.FillRectangle(packBrush, Center.X - 12, Center.Y - 8, packWidth, packHeight);
+            g.FillRectangle(packBrush, Center.X + 4, Center.Y - 8, packWidth, packHeight);
+            g.FillRectangle(packBrush, Center.X - 12, Center.Y + 10, packWidth, packHeight);
+            g.FillRectangle(packBrush, Center.X + 4, Center.Y + 10, packWidth, packHeight);
+
+            // Draw fuse on vest
+            Pen fusePen = new Pen(Color.Red, 2);
+            g.DrawLine(fusePen, Center.X, Center.Y + 10, Center.X, Center.Y - 15); // Fuse
+
+            // Draw weapon or detonator in hand
+            if (isFacingRight)
             {
-                // Draw gun in right hand
                 g.DrawLine(pen, Center.X + 24, Center.Y, Center.X + 34, Center.Y - 5);
                 g.DrawRectangle(pen, Center.X + 34, Center.Y - 8, 10, 6);
-
-                // Draw gun handle
                 g.DrawLine(pen, Center.X + 34, Center.Y - 5, Center.X + 34, Center.Y + 5);
             }
             else
             {
-                // Draw gun in left hand
                 g.DrawLine(pen, Center.X - 24, Center.Y, Center.X - 34, Center.Y - 5);
                 g.DrawRectangle(pen, Center.X - 44, Center.Y - 8, 10, 6);
-
-                // Draw gun handle
                 g.DrawLine(pen, Center.X - 34, Center.Y - 5, Center.X - 34, Center.Y + 5);
             }
 
             // Adjusted collision rectangle to be lower
             Collision = new Rectangle(Center.X - 24, Center.Y - 36, 48, 110);
-            Pen redPen = new Pen(Color.Red, 2); // Create a new pen for the red rectangle
+            Pen redPen = new Pen(Color.Red, 2); // Collision boundary
             //e.Graphics.DrawRectangle(redPen, Collision);
         }
+
         public bool CollisionCheck(Asset other)
         {
-            return this.Collision.IntersectsWith(other.Collision);
+            return Collision.IntersectsWith(other.Collision);
         }
-        public Bullet Shoot()
-        {
-            int bulletX = FacingRight ? Center.X + 25 : Center.X - 25;
-            Point bulletPosition = new Point(bulletX, Center.Y);
-            return new Bullet(bulletPosition,FacingRight);
-        }
-
     }
 }
