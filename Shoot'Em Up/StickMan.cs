@@ -67,5 +67,12 @@ namespace Shoot_Em_Up
             }
             return false;
         }
+        public Bullet Shoot()
+        {
+            int bulletX = FacingRight ? Center.X + 25 : Center.X - 25;
+            Point bulletPosition = new Point(bulletX, Center.Y);
+            return new Bullet(bulletPosition,FacingRight);
+        }
+
     }
 }

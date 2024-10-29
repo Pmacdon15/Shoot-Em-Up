@@ -69,9 +69,9 @@ namespace Shoot_Em_Up
             //e.Graphics.DrawRectangle(redPen, Collision);
         }
 
-        public bool CollisionCheck(StickMan player)
+        public bool CollisionCheck(Asset other)
         {
-            return Collision.IntersectsWith(player.Collision);
+            return Collision.IntersectsWith(other.Collision);
         }
     }
 }

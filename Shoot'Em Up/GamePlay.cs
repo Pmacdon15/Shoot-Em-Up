@@ -17,12 +17,13 @@ namespace Shoot_Em_Up
         int Score;
         int Collision;
         int Counter;
-       
+
         StickMan Player = new StickMan(new Point(550, 350));
         //List<StickMan> Enemies = new List<StickMan>();
         List<SuicideBomber> Enemies = new List<SuicideBomber>();
         Explosion explosion = null;
 
+        List<Bullet> Bullets = new List<Bullet>();
         public GamePlay()
         {
             InitializeComponent();
@@ -67,41 +68,74 @@ namespace Shoot_Em_Up
             this.Paint += new PaintEventHandler(PaintObjects);
         }
 
+        // Updated PaintObjects method
         protected void PaintObjects(object sender, PaintEventArgs e)
         {
             int rectWidth = (int)(this.Width * 0.95);
             int rectHeight = (int)(this.Height * 0.80);
             Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
             e.Graphics.DrawRectangle(Pens.White, rectangle);
-
             Region clippingRegion = new Region(rectangle);
             e.Graphics.Clip = clippingRegion;
 
+            // Draw Player
             Player.Draw(e, Player.FacingRight);
+
+            // Track items to remove after the loop
+            List<SuicideBomber> enemiesToRemove = new List<SuicideBomber>();
+            List<Bullet> bulletsToRemove = new List<Bullet>();
 
             for (int i = Enemies.Count - 1; i >= 0; i--)
             {
-                //StickMan enemy = Enemies[i];
                 SuicideBomber enemy = Enemies[i];
-
-
-
                 enemy.Draw(e, enemy.FacingRight);
 
+                // Check for player collision with enemy
                 if (Player.CollisionCheck(enemy))
                 {
-                    Collision--;
+                    Score--;
                     explosion = new Explosion { Center = enemy.Center };
-                    Enemies.RemoveAt(i);
+                    enemiesToRemove.Add(enemy);
+                    continue;
                 }
-                // Draw explosion if it's active
-                explosion?.Draw(e, enemy.FacingRight);
+
+                // Check for bullet collision with enemy
+                for (int j = Bullets.Count - 1; j >= 0; j--)
+                {
+                    Bullet bullet = Bullets[j];
+                    if (bullet.CheckCollision(enemy))
+                    {
+                        Score++;
+                        explosion = new Explosion { Center = enemy.Center };
+                        enemiesToRemove.Add(enemy);
+                        bulletsToRemove.Add(bullet);
+                        break;
+                    }
+                }
+            }
+
+            // Remove collided enemies and bullets after the loop
+            foreach (var enemy in enemiesToRemove) Enemies.Remove(enemy);
+            foreach (var bullet in bulletsToRemove) Bullets.Remove(bullet);
+
+            // Draw explosion if active
+            if (explosion != null)
+            {
+                explosion.Draw(e, Player.FacingRight);
+            }
+
+            // Draw bullets
+            foreach (Bullet bullet in Bullets)
+            {
+                bullet.Draw(e, Player.FacingRight);
             }
 
             e.Graphics.ResetClip();
 
-            e.Graphics.DrawString("Score: " + Collision.ToString(), new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.90), (float)(this.Height * 0.05)));
+            // Display Score
+            e.Graphics.DrawString("Score: " + Score.ToString(), new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.90), (float)(this.Height * 0.05)));
         }
+
 
         private void GameLoop_Tick(object sender, EventArgs e)
         {
@@ -109,6 +143,7 @@ namespace Shoot_Em_Up
             int rectHeight = (int)(this.Height * 0.73);
             Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
 
+            // Move Player within boundaries
             Player.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
 
             foreach (SuicideBomber enemy in Enemies)
@@ -132,17 +167,30 @@ namespace Shoot_Em_Up
                 enemy.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
             }
 
+            // Remove explosion after a certain duration
             Counter++;
-            if (Counter > 59)
+            if (Counter > 30) // Reduce count for faster explosion removal
             {
                 Counter = 0;
-                explosion = null; // Remove the explosion
+                explosion = null; // Remove the explosion after 30 ticks (adjust as needed)
             }
 
+            // Move bullets and check for boundary conditions
+            for (int i = Bullets.Count - 1; i >= 0; i--)
+            {
+                Bullets[i].Center = new Point(
+                    Bullets[i].Center.X + (Bullets[i].FacingRight ? 10 : -10),
+                    Bullets[i].Center.Y
+                );
+
+                // Remove bullets out of bounds
+                if (Bullets[i].Center.X < 0 || Bullets[i].Center.X > this.Width)
+                {
+                    Bullets.RemoveAt(i);
+                }
+            }
             this.Refresh();
         }
-
-
 
         private void GamePlay_KeyUp(object sender, KeyEventArgs e)
         {
@@ -166,7 +214,6 @@ namespace Shoot_Em_Up
             {
                 Player.MoveX = +5;
                 Player.FacingRight = true;
-
             }
             if (e.KeyCode == Keys.Up)
             {
@@ -176,6 +223,12 @@ namespace Shoot_Em_Up
             {
                 Player.MoveY = +5;
             }
+            if (e.KeyCode == Keys.Space)
+            {
+                Bullet bullet = Player.Shoot();
+                Bullets.Add(bullet);
+            }
         }
     }
 }
+  
