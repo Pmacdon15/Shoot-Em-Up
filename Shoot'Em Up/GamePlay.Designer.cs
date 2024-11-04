@@ -30,19 +30,35 @@
         {
             components = new System.ComponentModel.Container();
             GameLoop = new System.Windows.Forms.Timer(components);
+            label1 = new Label();
             SuspendLayout();
             // 
             // GameLoop
             // 
             GameLoop.Tick += GameLoop_Tick;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.BackColor = SystemColors.ActiveCaptionText;
+            label1.Font = new Font("Segoe UI", 13.8F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label1.ForeColor = SystemColors.ButtonHighlight;
+            label1.Location = new Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(29, 31);
+            label1.TabIndex = 0;
+            label1.Text = "X";
+            label1.Click += label1_Click;
+            // 
             // GamePlay
             // 
-            AutoScaleDimensions = new SizeF(12F, 30F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(533, 300);
             ControlBox = false;
+            Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.None;
+            Margin = new Padding(2);
             Name = "GamePlay";
             SizeGripStyle = SizeGripStyle.Hide;
             Text = "GamePlay";
@@ -51,10 +67,12 @@
             KeyUp += GamePlay_KeyUp;
             PreviewKeyDown += GamePlay_PreviewKeyDown;
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private System.Windows.Forms.Timer GameLoop;
+        private Label label1;
     }
 }
