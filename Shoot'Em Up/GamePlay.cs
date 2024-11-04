@@ -19,6 +19,8 @@ namespace Shoot_Em_Up
         int Counter;
 
         StickMan Player = new StickMan(new Point(550, 350));
+        List<Obstacle> Obstacles = new List<Obstacle>();
+        Random random = new Random();
         //List<StickMan> Enemies = new List<StickMan>();
         List<SuicideBomber> Enemies = new List<SuicideBomber>();
         List<Explosion> Explosions = new List<Explosion>();
@@ -34,6 +36,7 @@ namespace Shoot_Em_Up
 
         }
 
+        
         private void GamePlay_Load(object sender, EventArgs e)
         {
             int countBadGuys = 0;
@@ -42,6 +45,14 @@ namespace Shoot_Em_Up
             int[] movement = { -7, -5, -3, 0, 5, 7 };
             int[] movement2 = { -7, -5, -3, 3, 5, 7 };
             Random random = new Random();
+
+            for (int i = 0; i < 5; i++)
+            {
+                int x = random.Next(20, this.Width - 60); // Ensure the obstacle is within bounds
+                int y = random.Next(20, this.Height - 60); // Ensure the obstacle is within bounds
+                Obstacle obstacle = new Obstacle(new Point(x, y));
+                Obstacles.Add(obstacle);
+            }
 
             while (countBadGuys < maxBadGuys)
             {
@@ -84,7 +95,12 @@ namespace Shoot_Em_Up
             List<SuicideBomber> enemiesToRemove = new List<SuicideBomber>();
             List<Bullet> bulletsToRemove = new List<Bullet>();
 
-            
+            // Draw Obstacles
+            foreach (var obstacle in Obstacles)
+            {
+                obstacle.Draw(e, false); 
+            }
+
             // Draw explosions
             foreach (var explosion in Explosions)
             {
@@ -157,15 +173,32 @@ namespace Shoot_Em_Up
             Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
 
             // Move Player within boundaries
-            Player.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
+            Point futurePlayerPosition = new Point(Player.Center.X + Player.MoveX, Player.Center.Y + Player.MoveY);
+            Rectangle futurePlayerCollision = new Rectangle(futurePlayerPosition.X - 24, futurePlayerPosition.Y - 36, 48, 110); // Adjust size based on your player
 
-            foreach (SuicideBomber enemy in Enemies)
+            // Check for collision with obstacles for the player only
+            bool playerCollisionDetected = false;
+            foreach (Obstacle obstacle in Obstacles)
             {
-                // Calculate the direction towards the player
+                if (futurePlayerCollision.IntersectsWith(obstacle.Collision))
+                {
+                    playerCollisionDetected = true; // Collision detected for player
+                    break; // Exit the loop since we only care about player collisions
+                }
+            }
+
+            // Move the player only if no collision is detected
+            if (!playerCollisionDetected)
+            {
+                Player.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
+            }
+
+            // Continue with enemy movement regardless of player collision
+            foreach (var enemy in Enemies)
+            {
+                // Enemy moves toward the player
                 int deltaX = Player.Center.X - enemy.Center.X;
                 int deltaY = Player.Center.Y - enemy.Center.Y;
-
-                // Normalize the direction and apply a speed factor (e.g., 3)
                 double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
                 double speed = 3; // Adjust speed as needed
 
