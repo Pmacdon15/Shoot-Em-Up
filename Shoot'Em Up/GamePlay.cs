@@ -17,13 +17,18 @@ namespace Shoot_Em_Up
         int Score;
         int Collision;
         int Counter;
+        string PlayerName;
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            //"C:\\Users\\wagne\\WFORMS\\Shoot-Em-Up\\Shoot'Em Up";
+
+
 
         StickMan Player = new StickMan(new Point(550, 350));
         //List<StickMan> Enemies = new List<StickMan>();
         List<SuicideBomber> Enemies = new List<SuicideBomber>();
         List<Explosion> Explosions = new List<Explosion>();
         List<Bullet> Bullets = new List<Bullet>();
-        public GamePlay()
+        public GamePlay(string playerName)
         {
             InitializeComponent();
             this.DoubleBuffered = true;
@@ -31,6 +36,7 @@ namespace Shoot_Em_Up
             Score = 0;
             Collision = 0;
             Counter = 0;
+            PlayerName = playerName;
 
         }
 
@@ -84,7 +90,7 @@ namespace Shoot_Em_Up
             List<SuicideBomber> enemiesToRemove = new List<SuicideBomber>();
             List<Bullet> bulletsToRemove = new List<Bullet>();
 
-            
+
             // Draw explosions
             foreach (var explosion in Explosions)
             {
@@ -147,6 +153,10 @@ namespace Shoot_Em_Up
 
             // Display Score
             e.Graphics.DrawString("Score: " + Score.ToString(), new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.90), (float)(this.Height * 0.05)));
+
+            //Display PlayerName
+            e.Graphics.DrawString(PlayerName, new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.1), (float)(this.Height * 0.05)));
+
         }
 
 
@@ -185,7 +195,7 @@ namespace Shoot_Em_Up
                 Explosions[i].Counter += 1;
                 if (Explosions[i].Counter >= 30) Explosions.RemoveAt(i);
             }
-            
+
 
             // Move bullets and check for boundary conditions
             for (int i = Bullets.Count - 1; i >= 0; i--)
@@ -240,6 +250,16 @@ namespace Shoot_Em_Up
                 Bullet bullet = Player.Shoot();
                 Bullets.Add(bullet);
             }
+        }
+        public void SaveScore(string playerName, int score)
+        {
+            File.AppendAllTextAsync(Path.Combine(currentDirectory, "topscores.txt"), Environment.NewLine + ($"{playerName},{score}"));
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            SaveScore(PlayerName, Score);
+            this.Close();
         }
     }
 }
