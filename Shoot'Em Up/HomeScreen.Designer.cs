@@ -96,7 +96,6 @@
             Name = "HomeScreen";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Shoot'Em Up";
-            Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();
         }

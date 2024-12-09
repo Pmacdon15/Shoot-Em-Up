@@ -1,8 +1,0 @@
-wagner,100
-patrick,120
-player1,1
-Player1,-2
-Jonh,5
-Joe,5
-Abel,3
-Abel,5
