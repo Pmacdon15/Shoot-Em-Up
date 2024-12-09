@@ -186,6 +186,7 @@ namespace Shoot_Em_Up
             if (Lives == 0)
             {
                 isGameOver = true;
+                SaveScore(PlayerName, Score);
                 MessageBox.Show("GAME OVER\r\nYour Score: " + Score, "GAME OVER" , MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.Close();
                 
