@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Shoot_Em_Up
 {
@@ -253,7 +256,24 @@ namespace Shoot_Em_Up
         }
         public void SaveScore(string playerName, int score)
         {
-            File.AppendAllTextAsync(Path.Combine(currentDirectory, "topscores.txt"), Environment.NewLine + ($"{playerName},{score}"));
+            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + Path.Combine(currentDirectory, "TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
+
+            //string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=TopScores;Integrated Security=True;Persist Security Info=False;Pooling=False;Encrypt=False";
+
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+
+            string Query = "INSERT INTO Scores (PlayerName, Score) " +
+                "VALUES ('" + playerName + "', " + score + ");";
+            
+            SqlCommand cmd = new SqlCommand(Query, con);
+            cmd.ExecuteNonQuery();
+
+            con.Close();
+
+
+
+            //File.AppendAllTextAsync(Path.Combine(currentDirectory, "topscores.txt"), Environment.NewLine + ($"{playerName},{score}"));
         }
 
         private void label1_Click(object sender, EventArgs e)
