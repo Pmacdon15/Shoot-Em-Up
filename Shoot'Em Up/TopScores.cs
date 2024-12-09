@@ -109,8 +109,10 @@ namespace Shoot_Em_Up
             SqlCommand cmd = new SqlCommand(Query, con);
             cmd.ExecuteNonQuery();
             con.Close();
-            this.Show();
-            //this.Close();
+
+            MessageBox.Show("Top Scores Clear", "Top Scores Clear", MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
+
+            this.Close();
         }
     }
 }
