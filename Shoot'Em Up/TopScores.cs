@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,6 +16,8 @@ namespace Shoot_Em_Up
     {
         public string Name;
         public int Score;
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
 
         public PlayerScore(string name, int score)
         {
@@ -38,19 +41,57 @@ namespace Shoot_Em_Up
 
             List<PlayerScore> list = new List<PlayerScore>();
 
+            //string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=TopScores;Integrated Security=True;Connect Timeout=30";
+            //string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=TopScores;Integrated Security=True;Persist Security Info=False;Pooling=False;Encrypt=False";
+            //string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\TopScores.mdf;Integrated Security=True;Connect Timeout=30";
+            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(currentDirectory,"TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
 
-            foreach (string line in File.ReadLines(Path.Combine(currentDirectory, "topscores.txt")))
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+
+            string Query = "SELECT TOP (5) * FROM Scores ORDER BY Score DESC ";
+
+            SqlCommand cmd = new SqlCommand(Query, con);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            int i = 0;
+            while (reader.Read())
             {
-                if(!line.Contains(","))
-                {
-                    continue;
-                }
-                string[] playerandscore = line.Split(",");
-                PlayerScore newPlayerScore = new PlayerScore(playerandscore[0], Int32.Parse(playerandscore[1]));
-                list.Add(newPlayerScore);
+
+                MessageBox.Show(String.Format("{0} {1} {2}", reader[0], reader[1], reader[2]));
+
+
+                Label newLabelPlayer = new Label();
+                newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
+                newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelPlayer.Text = reader[1].ToString().ToUpper();
+
+                Label newLabelScore = new Label();
+                newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
+                newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelScore.TextAlign = ContentAlignment.MiddleRight;
+                newLabelScore.Text = reader[2].ToString();
+
+                this.Controls.Add(newLabelPlayer);
+                this.Controls.Add(newLabelScore);
+                i++;
             }
 
-            list.Sort((a, b) => b.Score - a.Score);
+            con.Close();
+
+
+            //foreach (string line in File.ReadLines(Path.Combine(currentDirectory, "topscores.txt")))
+            //{
+            //    if(!line.Contains(","))
+            //    {
+            //        continue;
+            //    }
+            //    string[] playerandscore = line.Split(",");
+            //    PlayerScore newPlayerScore = new PlayerScore(playerandscore[0], Int32.Parse(playerandscore[1]));
+            //    list.Add(newPlayerScore);
+            //}
+
+            //list.Sort((a, b) => b.Score - a.Score);
 
             Label labelTitleName = new Label();
             labelTitleName.Location = new Point(100, 50);
@@ -61,29 +102,31 @@ namespace Shoot_Em_Up
             labelTitleScore.Location = new Point(300, 50);
             labelTitleScore.Font = new Font("Arial", 12, FontStyle.Bold);
             labelTitleScore.Text = "Best Scores";
+            labelTitleScore.TextAlign = ContentAlignment.MiddleRight;
+
 
             this.Controls.Add(labelTitleName);
             this.Controls.Add(labelTitleScore);
 
 
-            for (int i = 0; i < list.Count; i++)
-            {
+            //for (int i = 0; i < list.Count; i++)
+            //{
 
-                Label newLabelPlayer = new Label();
-                newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
-                newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
-                newLabelPlayer.Text = list[i].Name.ToString().ToUpper();
+            //    Label newLabelPlayer = new Label();
+            //    newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
+            //    newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
+            //    newLabelPlayer.Text = list[i].Name.ToString().ToUpper();
 
-                Label newLabelScore = new Label();
-                newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
-                newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
-                newLabelScore.Text = list[i].Score.ToString();
+            //    Label newLabelScore = new Label();
+            //    newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
+            //    newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
+            //    newLabelScore.Text = list[i].Score.ToString();
 
-                this.Controls.Add(newLabelPlayer);
-                this.Controls.Add(newLabelScore);
+            //    this.Controls.Add(newLabelPlayer);
+            //    this.Controls.Add(newLabelScore);
 
-                if (i== 4) break;
-            }
+            //    if (i== 4) break;
+            //}
 
         }
     }
