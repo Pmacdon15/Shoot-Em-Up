@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Data.SqlClient;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Shoot_Em_Up
 {
@@ -15,13 +18,12 @@ namespace Shoot_Em_Up
     {
 
         int Score;
+        int Lives;
         int Collision;
         int Counter;
+        bool isGameOver;
         string PlayerName;
-        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        //"C:\\Users\\wagne\\WFORMS\\Shoot-Em-Up\\Shoot'Em Up";
-
-        
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;        
 
         StickMan Player = new StickMan(new Point(550, 350));
         //List<StickMan> Enemies = new List<StickMan>();
@@ -37,7 +39,9 @@ namespace Shoot_Em_Up
             Score = 0;
             Collision = 0;
             Counter = 0;
+            Lives = 5;
             PlayerName = playerName;
+            isGameOver = false;
 
         }
 
@@ -46,22 +50,12 @@ namespace Shoot_Em_Up
             int countBadGuys = 0;
             int maxBadGuys = 5;
 
-            int[] movement = { -7, -5, -3, 0, 5, 7 };
-            int[] movement2 = { -7, -5, -3, 3, 5, 7 };
-            Random random = new Random();
+            
+           
 
             while (countBadGuys < maxBadGuys)
             {
-                int x = random.Next(0, (int)(this.Width - (this.Width * 0.2)));
-                int y = random.Next(0, (int)(this.Height - (this.Height * 0.2)));
-                SuicideBomber enemy = new SuicideBomber(new Point(x, y));
-                //StickMan enemy = new StickMan(new Point(x, y));
-
-                //// Set initial movement based on position
-                enemy.MoveX = (x > 550) ? movement[random.Next(movement.Length)] : movement2[random.Next(movement2.Length)];
-                enemy.MoveY = movement[random.Next(movement.Length)];
-
-                Enemies.Add(enemy);
+                addNewEnemy();
                 countBadGuys++;
             }
 
@@ -91,9 +85,31 @@ namespace Shoot_Em_Up
             this.Paint += new PaintEventHandler(PaintObjects);
         }
 
+        private void addNewEnemy()
+        {
+            int[] movement = { -7, -5, -3, 0, 5, 7 };
+            int[] movement2 = { -7, -5, -3, 3, 5, 7 };
+            Random random = new Random();
+            int x = random.Next(0, (int)(this.Width - (this.Width * 0.2)));
+            int y = random.Next(0, (int)(this.Height - (this.Height * 0.2)));
+            SuicideBomber enemy = new SuicideBomber(new Point(x, y));
+            //StickMan enemy = new StickMan(new Point(x, y));
+
+            //// Set initial movement based on position
+            enemy.MoveX = (x > 550) ? movement[random.Next(movement.Length)]: movement2[random.Next(movement2.Length)];
+            enemy.MoveY = movement[random.Next(movement.Length)];
+
+            Enemies.Add(enemy);
+        }
+
         // Updated PaintObjects method
         protected void PaintObjects(object sender, PaintEventArgs e)
         {
+            if (isGameOver)
+            {
+            return;
+            }
+
             int rectWidth = (int)(this.Width * 0.95);
             int rectHeight = (int)(this.Height * 0.80);
             Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
@@ -138,21 +154,25 @@ namespace Shoot_Em_Up
                 // Check for player collision with enemy
                 if (Player.CollisionCheck(enemy))
                 {
-                    Score--;
+                    //Score--;
+                    Lives--;
                     Explosion explosion = new Explosion { Center = enemy.Center };
                     Explosions.Add(explosion); // Add explosion to the list
                     enemiesToRemove.Add(enemy);
                     continue;
                 }
 
-                //Check if enemy is is in explosion radius
+                //Check if enemy is in explosion radius
                 foreach (var explosion in Explosions)
                 {
                     if (explosion.CheckCollision(enemy))
                     {
-                        Score++;
+                        //Score++;
                         Explosions.Add(explosion); // Add explosion to the list
                         enemiesToRemove.Add(enemy);
+
+                        addNewEnemy();
+                        addNewEnemy();
                         break;
                     }
                 }
@@ -167,6 +187,9 @@ namespace Shoot_Em_Up
                         Explosions.Add(explosion); // Add explosion to the list
                         enemiesToRemove.Add(enemy);
                         bulletsToRemove.Add(bullet);
+
+                        addNewEnemy();
+                        addNewEnemy();
                         break;
                     }
                 }
@@ -178,17 +201,32 @@ namespace Shoot_Em_Up
 
             e.Graphics.ResetClip();
 
-            // Display Score
+            // Display Score and Lifes
             e.Graphics.DrawString("Score: " + Score.ToString(), new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.90), (float)(this.Height * 0.05)));
+            e.Graphics.DrawString("Lives: " + Lives.ToString(), new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.45), (float)(this.Height * 0.05)));
 
             //Display PlayerName
             e.Graphics.DrawString(PlayerName, new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.1), (float)(this.Height * 0.05)));
+
+            if (Lives == 0)
+            {
+                isGameOver = true;
+                SaveScore(PlayerName, Score);
+                MessageBox.Show("GAME OVER\r\nYour Score: " + Score, "GAME OVER" , MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.Close();
+                
+            }
 
         }
 
 
         private void GameLoop_Tick(object sender, EventArgs e)
         {
+            if (isGameOver)
+            {
+                return;
+            }
+
             int rectWidth = (int)(this.Width * 0.91);
             int rectHeight = (int)(this.Height * 0.73);
             Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
@@ -371,7 +409,20 @@ namespace Shoot_Em_Up
         }
         public void SaveScore(string playerName, int score)
         {
-            File.AppendAllTextAsync(Path.Combine(currentDirectory, "topscores.txt"), Environment.NewLine + ($"{playerName},{score}"));
+            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + Path.Combine(currentDirectory, "TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
+
+
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+
+            string Query = "INSERT INTO Scores (PlayerName, Score) " +
+                "VALUES ('" + playerName + "', " + score + ");";
+            
+            SqlCommand cmd = new SqlCommand(Query, con);
+            cmd.ExecuteNonQuery();
+
+            con.Close();
+
         }
 
         private void label1_Click(object sender, EventArgs e)

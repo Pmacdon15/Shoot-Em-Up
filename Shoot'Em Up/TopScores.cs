@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,6 +16,8 @@ namespace Shoot_Em_Up
     {
         public string Name;
         public int Score;
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
 
         public PlayerScore(string name, int score)
         {
@@ -26,8 +29,8 @@ namespace Shoot_Em_Up
 
     public partial class TopScores : Form
     {
-        //string currentDirectory = "C:\\Users\\wagne\\WFORMS\\Shoot-Em-Up\\Shoot'Em Up";
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
         public TopScores()
         {
             InitializeComponent();
@@ -38,19 +41,38 @@ namespace Shoot_Em_Up
 
             List<PlayerScore> list = new List<PlayerScore>();
 
+            //string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(currentDirectory,"TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
 
-            foreach (string line in File.ReadLines(Path.Combine(currentDirectory, "topscores.txt")))
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+
+            string Query = "SELECT TOP (5) * FROM Scores ORDER BY Score DESC ";
+
+            SqlCommand cmd = new SqlCommand(Query, con);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            int i = 0;
+            while (reader.Read())
             {
-                if(!line.Contains(","))
-                {
-                    continue;
-                }
-                string[] playerandscore = line.Split(",");
-                PlayerScore newPlayerScore = new PlayerScore(playerandscore[0], Int32.Parse(playerandscore[1]));
-                list.Add(newPlayerScore);
+
+                Label newLabelPlayer = new Label();
+                newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
+                newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelPlayer.Text = reader[1].ToString().ToUpper();
+
+                Label newLabelScore = new Label();
+                newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
+                newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelScore.TextAlign = ContentAlignment.MiddleRight;
+                newLabelScore.Text = reader[2].ToString();
+
+                this.Controls.Add(newLabelPlayer);
+                this.Controls.Add(newLabelScore);
+                i++;
             }
 
-            list.Sort((a, b) => b.Score - a.Score);
+            con.Close();
+
 
             Label labelTitleName = new Label();
             labelTitleName.Location = new Point(100, 50);
@@ -61,30 +83,36 @@ namespace Shoot_Em_Up
             labelTitleScore.Location = new Point(300, 50);
             labelTitleScore.Font = new Font("Arial", 12, FontStyle.Bold);
             labelTitleScore.Text = "Best Scores";
+            labelTitleScore.TextAlign = ContentAlignment.MiddleRight;
+
+            Button buttonClear = new Button();
+            buttonClear.Location = new Point((int)(this.Width * 0.35), (int)(0.75* this.Height));
+            buttonClear.Height = (int)(0.1 * this.Height);
+            buttonClear.Width = (int)(0.3 * this.Width);
+            buttonClear.Text = "Clear Score";
+            buttonClear.Click += new EventHandler(this.ClearScores);
+
 
             this.Controls.Add(labelTitleName);
             this.Controls.Add(labelTitleScore);
+            this.Controls.Add(buttonClear);
 
+        }
 
-            for (int i = 0; i < list.Count; i++)
-            {
+        private void ClearScores(object? sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
 
-                Label newLabelPlayer = new Label();
-                newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
-                newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
-                newLabelPlayer.Text = list[i].Name.ToString().ToUpper();
+            string Query = "DELETE FROM Scores";
 
-                Label newLabelScore = new Label();
-                newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
-                newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
-                newLabelScore.Text = list[i].Score.ToString();
+            SqlCommand cmd = new SqlCommand(Query, con);
+            cmd.ExecuteNonQuery();
+            con.Close();
 
-                this.Controls.Add(newLabelPlayer);
-                this.Controls.Add(newLabelScore);
+            MessageBox.Show("Top Scores Clear", "Top Scores Clear", MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
 
-                if (i== 4) break;
-            }
-
+            this.Close();
         }
     }
 }
