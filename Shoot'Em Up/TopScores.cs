@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -30,7 +30,7 @@ namespace Shoot_Em_Up
     public partial class TopScores : Form
     {
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
+        string connectionString = "Data Source=(localdb)\\ProjectModels;Initial Catalog=DbTopScores;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
         public TopScores()
         {
             InitializeComponent();
@@ -41,7 +41,6 @@ namespace Shoot_Em_Up
 
             List<PlayerScore> list = new List<PlayerScore>();
 
-            //string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(currentDirectory,"TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
 
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();

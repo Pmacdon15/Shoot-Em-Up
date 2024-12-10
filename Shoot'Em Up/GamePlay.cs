@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Shoot_Em_Up
@@ -19,8 +19,6 @@ namespace Shoot_Em_Up
 
         int Score;
         int Lives;
-        int Collision;
-        int Counter;
         bool isGameOver;
         string PlayerName;
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;        
@@ -37,8 +35,6 @@ namespace Shoot_Em_Up
             this.DoubleBuffered = true;
 
             Score = 0;
-            Collision = 0;
-            Counter = 0;
             Lives = 5;
             PlayerName = playerName;
             isGameOver = false;
@@ -50,8 +46,7 @@ namespace Shoot_Em_Up
             int countBadGuys = 0;
             int maxBadGuys = 5;
 
-            
-           
+            Random random = new Random();
 
             while (countBadGuys < maxBadGuys)
             {
@@ -409,7 +404,7 @@ namespace Shoot_Em_Up
         }
         public void SaveScore(string playerName, int score)
         {
-            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=" + Path.Combine(currentDirectory, "TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
+            string connectionString = "Data Source=(localdb)\\ProjectModels;Initial Catalog=DbTopScores;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
 
             SqlConnection con = new SqlConnection(connectionString);
