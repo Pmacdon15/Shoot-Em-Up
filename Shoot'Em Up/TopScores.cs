@@ -30,6 +30,7 @@ namespace Shoot_Em_Up
     public partial class TopScores : Form
     {
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
         public TopScores()
         {
             InitializeComponent();
@@ -40,7 +41,7 @@ namespace Shoot_Em_Up
 
             List<PlayerScore> list = new List<PlayerScore>();
 
-            string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(currentDirectory,"TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
+            //string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename="+Path.Combine(currentDirectory,"TopScores.mdf") + ";Integrated Security=True;Connect Timeout=30";
 
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
@@ -84,10 +85,34 @@ namespace Shoot_Em_Up
             labelTitleScore.Text = "Best Scores";
             labelTitleScore.TextAlign = ContentAlignment.MiddleRight;
 
+            Button buttonClear = new Button();
+            buttonClear.Location = new Point((int)(this.Width * 0.35), (int)(0.75* this.Height));
+            buttonClear.Height = (int)(0.1 * this.Height);
+            buttonClear.Width = (int)(0.3 * this.Width);
+            buttonClear.Text = "Clear Score";
+            buttonClear.Click += new EventHandler(this.ClearScores);
+
 
             this.Controls.Add(labelTitleName);
             this.Controls.Add(labelTitleScore);
+            this.Controls.Add(buttonClear);
 
+        }
+
+        private void ClearScores(object? sender, EventArgs e)
+        {
+            SqlConnection con = new SqlConnection(connectionString);
+            con.Open();
+
+            string Query = "DELETE FROM Scores";
+
+            SqlCommand cmd = new SqlCommand(Query, con);
+            cmd.ExecuteNonQuery();
+            con.Close();
+
+            MessageBox.Show("Top Scores Clear", "Top Scores Clear", MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
+
+            this.Close();
         }
     }
 }
