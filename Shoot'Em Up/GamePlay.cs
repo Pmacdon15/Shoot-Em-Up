@@ -98,7 +98,7 @@ namespace Shoot_Em_Up
         }
 
         // Updated PaintObjects method
-        protected void PaintObjects(object sender, PaintEventArgs e)
+        protected void PaintObjects(object? sender, PaintEventArgs e)
         {
             if (isGameOver)
             {
@@ -203,7 +203,7 @@ namespace Shoot_Em_Up
             //Display PlayerName
             e.Graphics.DrawString(PlayerName, new Font("Arial", 12, FontStyle.Regular), Brushes.Red, new PointF((float)(this.Width * 0.1), (float)(this.Height * 0.05)));
 
-            if (Lives == 0)
+            if (Lives <= 0)
             {
                 isGameOver = true;
                 SaveScore(PlayerName, Score);

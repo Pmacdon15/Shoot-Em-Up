@@ -57,8 +57,10 @@ namespace Shoot_Em_Up
                 Label newLabelPlayer = new Label();
                 newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
                 newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
-                newLabelPlayer.Text = reader[1].ToString().ToUpper();
-
+                if (reader[1] != null)
+                {
+                    newLabelPlayer.Text = reader[1].ToString();
+                }
                 Label newLabelScore = new Label();
                 newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
                 newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
