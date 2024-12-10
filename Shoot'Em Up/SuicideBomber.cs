@@ -65,7 +65,7 @@ namespace Shoot_Em_Up
 
             // Adjusted collision rectangle to be lower
             Collision = new Rectangle(Center.X - 24, Center.Y - 36, 48, 110);
-            Pen redPen = new Pen(Color.Red, 2); // Collision boundary
+            //Pen redPen = new Pen(Color.Red, 2); // Collision boundary
             //e.Graphics.DrawRectangle(redPen, Collision);
         }
 

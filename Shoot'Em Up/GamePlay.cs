@@ -23,15 +23,14 @@ namespace Shoot_Em_Up
         int Counter;
         bool isGameOver;
         string PlayerName;
-        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
-
+        string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;        
 
         StickMan Player = new StickMan(new Point(550, 350));
         //List<StickMan> Enemies = new List<StickMan>();
         List<SuicideBomber> Enemies = new List<SuicideBomber>();
         List<Explosion> Explosions = new List<Explosion>();
         List<Bullet> Bullets = new List<Bullet>();
+        List<Obstacle> Obstacles = new List<Obstacle>(); 
         public GamePlay(string playerName)
         {
             InitializeComponent();
@@ -58,6 +57,23 @@ namespace Shoot_Em_Up
             {
                 addNewEnemy();
                 countBadGuys++;
+            }
+
+            // Randomly initializes 3-5 obstacles 
+            int numberOfObstacles = random.Next(3, 6); // Generates 3, 4, or 5 obstacles
+
+            // Adjusting for the white border
+            int playAreaWidth = (int)(this.Width * 0.95);
+            int playAreaHeight = (int)(this.Height * 0.80);
+            int playAreaX = (this.Width - playAreaWidth) / 2;
+            int playAreaY = (this.Height - playAreaHeight) / 2;
+
+            for (int i = 0; i < numberOfObstacles; i++)
+            {
+                // Ensure obstacle fits within the white border, accounting for its size
+                int x = random.Next(playAreaX + Obstacle.Width / 2, playAreaX + playAreaWidth - Obstacle.Width / 2);
+                int y = random.Next(playAreaY + Obstacle.Height / 2, playAreaY + playAreaHeight - Obstacle.Height / 2);
+                Obstacles.Add(new Obstacle(new Point(x, y)));
             }
 
             GameLoop.Interval = 24;
@@ -108,7 +124,6 @@ namespace Shoot_Em_Up
             List<SuicideBomber> enemiesToRemove = new List<SuicideBomber>();
             List<Bullet> bulletsToRemove = new List<Bullet>();
 
-
             // Draw explosions
             foreach (var explosion in Explosions)
             {
@@ -119,6 +134,16 @@ namespace Shoot_Em_Up
             foreach (Bullet bullet in Bullets)
             {
                 bullet.Draw(e, Player.FacingRight);
+            }
+
+            // Draw obstacles
+            foreach (Obstacle obstacle in Obstacles)
+            {
+                obstacle.Draw(e, false);
+                //using (Pen redPen = new Pen(Color.Red, 2))
+                //{
+                  //e.Graphics.DrawRectangle(redPen, obstacle.Collision);
+                //}
             }
 
             for (int i = Enemies.Count - 1; i >= 0; i--)
@@ -206,36 +231,127 @@ namespace Shoot_Em_Up
             int rectHeight = (int)(this.Height * 0.73);
             Rectangle rectangle = new Rectangle((this.Width - rectWidth) / 2, (this.Height - rectHeight) / 2, rectWidth, rectHeight);
 
-            // Move Player within boundaries
-            Player.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
+            // Movement restriction for player and enemies by obstacles
+            List<Asset> characters = new List<Asset> { Player };
+            characters.AddRange(Enemies);
 
-            foreach (SuicideBomber enemy in Enemies)
+            foreach (var character in characters)
             {
-                // Calculate the direction towards the player
-                int deltaX = Player.Center.X - enemy.Center.X;
-                int deltaY = Player.Center.Y - enemy.Center.Y;
+                Point previousPosition = character.Center; // Store current position
 
-                // Normalize the direction and apply a speed factor (e.g., 3)
-                double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-                double speed = 3; // Adjust speed as needed
+                // Movement in each direction separately
+                int newX = character.Center.X;
+                int newY = character.Center.Y;
 
-                if (distance > 0) // Avoid division by zero
+                if (character is StickMan stickMan)
                 {
-                    enemy.MoveX = (int)(speed * (deltaX / distance));
-                    enemy.MoveY = (int)(speed * (deltaY / distance));
-                    enemy.FacingRight = enemy.MoveX >= 0;
+                    // Check if moving X would cause collision
+                    Rectangle newCollisionX = new Rectangle(stickMan.Center.X + stickMan.MoveX - 24, stickMan.Center.Y - 36, 48, 110);
+                    bool canMoveX = true;
+                    foreach (Obstacle obstacle in Obstacles)
+                    {
+                        if (obstacle.CheckCollision(newCollisionX))
+                        {
+                            canMoveX = false;
+                            break;
+                        }
+                    }
+
+                    // Check if moving Y would cause collision
+                    Rectangle newCollisionY = new Rectangle(stickMan.Center.X - 24, stickMan.Center.Y + stickMan.MoveY - 36, 48, 110);
+                    bool canMoveY = true;
+                    foreach (Obstacle obstacle in Obstacles)
+                    {
+                        if (obstacle.CheckCollision(newCollisionY))
+                        {
+                            canMoveY = false;
+                            break;
+                        }
+                    }
+
+                    // Update position only for movements that don't collide
+                    newX = canMoveX ? stickMan.Center.X + stickMan.MoveX : stickMan.Center.X;
+                    newY = canMoveY ? stickMan.Center.Y + stickMan.MoveY : stickMan.Center.Y;
+                    stickMan.Center = new Point(newX, newY);
+                }
+                else if (character is SuicideBomber bomber)
+                {
+                    // Calculate the direction towards the player
+                    int deltaX = Player.Center.X - bomber.Center.X;
+                    int deltaY = Player.Center.Y - bomber.Center.Y;
+
+                    // Normalize the direction and apply a speed factor (e.g., 3)
+                    double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+                    double speed = 3; // Adjust speed as needed
+
+                    if (distance > 0) // Avoid division by zero
+                    {
+                        int moveX = (int)(speed * (deltaX / distance));
+                        int moveY = (int)(speed * (deltaY / distance));
+
+                        // Check if moving X would cause collision
+                        Rectangle newCollisionX = new Rectangle(bomber.Center.X + moveX - 24, bomber.Center.Y - 36, 48, 110);
+                        bool canMoveX = true;
+                        foreach (Obstacle obstacle in Obstacles)
+                        {
+                            if (obstacle.CheckCollision(newCollisionX))
+                            {
+                                canMoveX = false;
+                                break;
+                            }
+                        }
+
+                        // Check if moving Y would cause collision
+                        Rectangle newCollisionY = new Rectangle(bomber.Center.X - 24, bomber.Center.Y + moveY - 36, 48, 110);
+                        bool canMoveY = true;
+                        foreach (Obstacle obstacle in Obstacles)
+                        {
+                            if (obstacle.CheckCollision(newCollisionY))
+                            {
+                                canMoveY = false;
+                                break;
+                            }
+                        }
+
+                        // Update position only for movements that don't collide
+                        newX = canMoveX ? bomber.Center.X + moveX : bomber.Center.X;
+                        newY = canMoveY ? bomber.Center.Y + moveY : bomber.Center.Y;
+                        bomber.Center = new Point(newX, newY);
+                        bomber.FacingRight = moveX >= 0;
+                    }
                 }
 
-                // Move the enemy within boundaries
-                enemy.Move(rectangle.X, rectangle.X + rectangle.Width, rectangle.Y, rectangle.Y + rectangle.Height);
+                // Additional boundary check after moving
+                character.Center = new Point(
+                    Math.Max(rectangle.X, Math.Min(character.Center.X, rectangle.X + rectangle.Width)),
+                    Math.Max(rectangle.Y, Math.Min(character.Center.Y, rectangle.Y + rectangle.Height))
+                );
             }
+
+            // Bullet-Obstacle collision
+            for (int i = Bullets.Count - 1; i >= 0; i--)
+            {
+                Rectangle bulletCollision = new Rectangle(
+                    Bullets[i].Center.X - 5, 
+                    Bullets[i].Center.Y - 2, 
+                    10, 5
+                );
+                foreach (Obstacle obstacle in Obstacles)
+                {
+                    if (obstacle.CheckCollision(bulletCollision))
+                    {
+                        Bullets.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+
             // Remove explosion after a certain duration      
             for (int i = Explosions.Count - 1; i >= 0; i--)
             {
                 Explosions[i].Counter += 1;
                 if (Explosions[i].Counter >= 30) Explosions.RemoveAt(i);
             }
-
 
             // Move bullets and check for boundary conditions
             for (int i = Bullets.Count - 1; i >= 0; i--)
@@ -316,4 +432,3 @@ namespace Shoot_Em_Up
         }
     }
 }
-  
