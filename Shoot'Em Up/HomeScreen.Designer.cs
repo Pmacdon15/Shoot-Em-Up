@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HomeScreen));
             button_start_game = new Button();
             textBox_PlayerName = new TextBox();
             label_PlayerName = new Label();
@@ -90,6 +91,7 @@
             Controls.Add(button_start_game);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.Fixed3D;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(2);
             MaximizeBox = false;
             MinimizeBox = false;

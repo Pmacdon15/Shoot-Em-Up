@@ -404,13 +404,14 @@ namespace Shoot_Em_Up
         }
         public void SaveScore(string playerName, int score)
         {
-            string connectionString = "Data Source=(localdb)\\ProjectModels;Initial Catalog=DbTopScores;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        string connectionString = "Server=tcp:bowvalleycollege.database.windows.net,1433;Initial Catalog=bvc;Persist Security Info=False;User ID=default;Password=wohKot-8vikne-diskax;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+            //string connectionString = "Data Source=(localdb)\\ProjectModels;Initial Catalog=DbTopScores;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
 
 
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
 
-            string Query = "INSERT INTO Scores (PlayerName, Score) " +
+            string Query = "INSERT INTO TopScores (PlayerName, Score) " +
                 "VALUES ('" + playerName + "', " + score + ");";
             
             SqlCommand cmd = new SqlCommand(Query, con);

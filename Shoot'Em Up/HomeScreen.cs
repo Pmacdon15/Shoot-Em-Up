@@ -19,5 +19,10 @@ namespace Shoot_Em_Up
             TopScores newTopScoresWindow = new TopScores();
             newTopScoresWindow.Show();
         }
+
+        private void HomeScreen_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
