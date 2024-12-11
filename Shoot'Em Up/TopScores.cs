@@ -61,14 +61,14 @@ namespace Shoot_Em_Up
 
                 Label newLabelPlayer = new Label();
                 newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
-                newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelPlayer.Font = new Font("Arial", 10, FontStyle.Regular);
                 if (reader[1] != null)
                 {
                     newLabelPlayer.Text = reader[1].ToString();
                 }
                 Label newLabelScore = new Label();
                 newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
-                newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelScore.Font = new Font("Arial", 10, FontStyle.Regular);
                 newLabelScore.TextAlign = ContentAlignment.MiddleRight;
                 newLabelScore.Text = reader[2].ToString();
 
@@ -82,12 +82,12 @@ namespace Shoot_Em_Up
 
             Label labelTitleName = new Label();
             labelTitleName.Location = new Point(100, 50);
-            labelTitleName.Font = new Font("Arial", 12, FontStyle.Bold);
+            labelTitleName.Font = new Font("Arial", 10, FontStyle.Bold);
             labelTitleName.Text = "Player";
 
             Label labelTitleScore = new Label();
             labelTitleScore.Location = new Point(300, 50);
-            labelTitleScore.Font = new Font("Arial", 12, FontStyle.Bold);
+            labelTitleScore.Font = new Font("Arial", 10, FontStyle.Bold);
             labelTitleScore.Text = "Best Scores";
             labelTitleScore.TextAlign = ContentAlignment.MiddleRight;
 

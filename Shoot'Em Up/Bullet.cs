@@ -28,11 +28,7 @@ namespace Shoot_Em_Up
                 e.Graphics.FillEllipse(brush, x, y, width, height);
 
                 Collision = new Rectangle(x, y, width, height);
-                // Draw collision box
-                //using (Pen pen = new Pen(Color.Red, 1))
-                //{
-                //    e.Graphics.DrawRectangle(pen, x, y, width, height);
-                //}
+              
             }
         }
 
