@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Diagnostics.Metrics;
 
 namespace Shoot_Em_Up
 {
@@ -30,7 +32,10 @@ namespace Shoot_Em_Up
     public partial class TopScores : Form
     {
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string connectionString = "Data Source=(localdb)\\ProjectModels;Initial Catalog=DbTopScores;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+        string connectionString = "Server=tcp:bowvalleycollege.database.windows.net,1433;Initial Catalog=bvc;Persist Security Info=False;User ID=default;Password=wohKot-8vikne-diskax;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        //string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=DbTopScores;Connect Timeout=30";
+
+        //string connectionString = "Data Source=(localdb)\\ProjectModels;;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
         public TopScores()
         {
             InitializeComponent();
@@ -45,7 +50,7 @@ namespace Shoot_Em_Up
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
 
-            string Query = "SELECT TOP (5) * FROM Scores ORDER BY Score DESC ";
+            string Query = "SELECT TOP (5) * FROM TopScores ORDER BY Score DESC ";
 
             SqlCommand cmd = new SqlCommand(Query, con);
             SqlDataReader reader = cmd.ExecuteReader();
@@ -56,14 +61,14 @@ namespace Shoot_Em_Up
 
                 Label newLabelPlayer = new Label();
                 newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
-                newLabelPlayer.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelPlayer.Font = new Font("Arial", 10, FontStyle.Regular);
                 if (reader[1] != null)
                 {
                     newLabelPlayer.Text = reader[1].ToString();
                 }
                 Label newLabelScore = new Label();
                 newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
-                newLabelScore.Font = new Font("Arial", 12, FontStyle.Bold);
+                newLabelScore.Font = new Font("Arial", 10, FontStyle.Regular);
                 newLabelScore.TextAlign = ContentAlignment.MiddleRight;
                 newLabelScore.Text = reader[2].ToString();
 
@@ -77,12 +82,12 @@ namespace Shoot_Em_Up
 
             Label labelTitleName = new Label();
             labelTitleName.Location = new Point(100, 50);
-            labelTitleName.Font = new Font("Arial", 12, FontStyle.Bold);
+            labelTitleName.Font = new Font("Arial", 10, FontStyle.Bold);
             labelTitleName.Text = "Player";
 
             Label labelTitleScore = new Label();
             labelTitleScore.Location = new Point(300, 50);
-            labelTitleScore.Font = new Font("Arial", 12, FontStyle.Bold);
+            labelTitleScore.Font = new Font("Arial", 10, FontStyle.Bold);
             labelTitleScore.Text = "Best Scores";
             labelTitleScore.TextAlign = ContentAlignment.MiddleRight;
 
@@ -105,7 +110,7 @@ namespace Shoot_Em_Up
             SqlConnection con = new SqlConnection(connectionString);
             con.Open();
 
-            string Query = "DELETE FROM Scores";
+            string Query = "DELETE FROM TopScores";
 
             SqlCommand cmd = new SqlCommand(Query, con);
             cmd.ExecuteNonQuery();

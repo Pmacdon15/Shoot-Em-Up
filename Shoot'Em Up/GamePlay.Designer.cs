@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GamePlay));
             GameLoop = new System.Windows.Forms.Timer(components);
             label1 = new Label();
             SuspendLayout();
@@ -58,6 +59,7 @@
             ControlBox = false;
             Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.None;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(2);
             Name = "GamePlay";
             SizeGripStyle = SizeGripStyle.Hide;
