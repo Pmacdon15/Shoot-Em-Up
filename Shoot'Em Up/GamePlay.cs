@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics.Metrics;
 using System.Drawing;
@@ -404,20 +405,25 @@ namespace Shoot_Em_Up
         }
         public void SaveScore(string playerName, int score)
         {
-        string connectionString = "Server=tcp:bowvalleycollege.database.windows.net,1433;Initial Catalog=bvc;Persist Security Info=False;User ID=default;Password=wohKot-8vikne-diskax;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-            //string connectionString = "Data Source=(localdb)\\ProjectModels;Initial Catalog=DbTopScores;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
+            string connectionString = ConfigurationManager.ConnectionStrings["Shoot_Em_Up.Properties.Settings.connectionString"].ConnectionString;
+            try
+            {
 
+                SqlConnection con = new SqlConnection(connectionString);
+                con.Open();
 
-            SqlConnection con = new SqlConnection(connectionString);
-            con.Open();
+                string Query = "INSERT INTO TopScores (PlayerName, Score) " +
+                    "VALUES ('" + playerName + "', " + score + ");";
 
-            string Query = "INSERT INTO TopScores (PlayerName, Score) " +
-                "VALUES ('" + playerName + "', " + score + ");";
-            
-            SqlCommand cmd = new SqlCommand(Query, con);
-            cmd.ExecuteNonQuery();
+                SqlCommand cmd = new SqlCommand(Query, con);
+                cmd.ExecuteNonQuery();
 
-            con.Close();
+                con.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
         }
 
