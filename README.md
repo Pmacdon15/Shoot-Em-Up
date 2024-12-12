@@ -30,5 +30,8 @@
 4. Avoid obstacles and shoot enemies to score points.
 5. View top scores by clicking the "Top Scores" button on the home screen.
 
+## Database
+-The game uses a database hosted on Azure to store and retrieve the top scores
+
 ## License
 This project is licensed under the MIT License.
