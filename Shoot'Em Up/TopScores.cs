@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Diagnostics.Metrics;
+using System.Configuration;
 
 namespace Shoot_Em_Up
 {
@@ -32,7 +33,11 @@ namespace Shoot_Em_Up
     public partial class TopScores : Form
     {
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string connectionString = "Server=tcp:bowvalleycollege.database.windows.net,1433;Initial Catalog=bvc;Persist Security Info=False;User ID=default;Password=wohKot-8vikne-diskax;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        string connectionString;
+
+
+        //ConfigurationManager.AppSettings["connectionString"];
+            //"Server=tcp:bowvalleycollege.database.windows.net,1433;Initial Catalog=bvc;Persist Security Info=False;User ID=default;Password=wohKot-8vikne-diskax;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
         //string connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=DbTopScores;Connect Timeout=30";
 
         //string connectionString = "Data Source=(localdb)\\ProjectModels;;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False";
@@ -43,42 +48,50 @@ namespace Shoot_Em_Up
 
         private void TopScores_Load(object sender, EventArgs e)
         {
+            connectionString = ConfigurationManager.ConnectionStrings["Shoot_Em_Up.Properties.Settings.connectionString"].ConnectionString;
 
             List<PlayerScore> list = new List<PlayerScore>();
 
-
-            SqlConnection con = new SqlConnection(connectionString);
-            con.Open();
-
-            string Query = "SELECT TOP (5) * FROM TopScores ORDER BY Score DESC ";
-
-            SqlCommand cmd = new SqlCommand(Query, con);
-            SqlDataReader reader = cmd.ExecuteReader();
-
-            int i = 0;
-            while (reader.Read())
+            try
             {
 
-                Label newLabelPlayer = new Label();
-                newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
-                newLabelPlayer.Font = new Font("Arial", 10, FontStyle.Regular);
-                if (reader[1] != null)
+                SqlConnection con = new SqlConnection(connectionString);
+                con.Open();
+
+                string Query = "SELECT TOP (5) * FROM TopScores ORDER BY Score DESC ";
+
+                SqlCommand cmd = new SqlCommand(Query, con);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                int i = 0;
+                while (reader.Read())
                 {
-                    newLabelPlayer.Text = reader[1].ToString();
+
+                    Label newLabelPlayer = new Label();
+                    newLabelPlayer.Location = new Point(100, (int)(this.Height * 0.10) * i + 100);
+                    newLabelPlayer.Font = new Font("Arial", 10, FontStyle.Regular);
+                    if (reader[1] != null)
+                    {
+                        newLabelPlayer.Text = reader[1].ToString();
+                    }
+                    Label newLabelScore = new Label();
+                    newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
+                    newLabelScore.Font = new Font("Arial", 10, FontStyle.Regular);
+                    newLabelScore.TextAlign = ContentAlignment.MiddleRight;
+                    newLabelScore.Text = reader[2].ToString();
+
+                    this.Controls.Add(newLabelPlayer);
+                    this.Controls.Add(newLabelScore);
+                    i++;
                 }
-                Label newLabelScore = new Label();
-                newLabelScore.Location = new Point(300, (int)(this.Height * 0.10) * i + 100);
-                newLabelScore.Font = new Font("Arial", 10, FontStyle.Regular);
-                newLabelScore.TextAlign = ContentAlignment.MiddleRight;
-                newLabelScore.Text = reader[2].ToString();
 
-                this.Controls.Add(newLabelPlayer);
-                this.Controls.Add(newLabelScore);
-                i++;
+                con.Close();
+
             }
-
-            con.Close();
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             Label labelTitleName = new Label();
             labelTitleName.Location = new Point(100, 50);
@@ -107,18 +120,27 @@ namespace Shoot_Em_Up
 
         private void ClearScores(object? sender, EventArgs e)
         {
-            SqlConnection con = new SqlConnection(connectionString);
-            con.Open();
 
-            string Query = "DELETE FROM TopScores";
+            try
+            {
 
-            SqlCommand cmd = new SqlCommand(Query, con);
-            cmd.ExecuteNonQuery();
-            con.Close();
+                SqlConnection con = new SqlConnection(connectionString);
+                con.Open();
 
-            MessageBox.Show("Top Scores Clear", "Top Scores Clear", MessageBoxButtons.OK,MessageBoxIcon.Exclamation);
+                string Query = "DELETE FROM TopScores";
 
-            this.Close();
+                SqlCommand cmd = new SqlCommand(Query, con);
+                cmd.ExecuteNonQuery();
+                con.Close();
+
+                MessageBox.Show("Top Scores Clear", "Top Scores Clear", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
     }
 }
