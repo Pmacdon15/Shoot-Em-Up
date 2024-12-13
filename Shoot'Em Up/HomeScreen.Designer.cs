@@ -32,16 +32,15 @@
             button_start_game = new Button();
             textBox_PlayerName = new TextBox();
             label_PlayerName = new Label();
-            button1 = new Button();
+            button_Top_Scores = new Button();
             SuspendLayout();
             // 
             // button_start_game
             // 
             button_start_game.FlatStyle = FlatStyle.Popup;
-            button_start_game.Location = new Point(573, 316);
-            button_start_game.Margin = new Padding(2);
+            button_start_game.Location = new Point(860, 474);
             button_start_game.Name = "button_start_game";
-            button_start_game.Size = new Size(135, 27);
+            button_start_game.Size = new Size(202, 40);
             button_start_game.TabIndex = 0;
             button_start_game.Text = "Start Game";
             button_start_game.UseVisualStyleBackColor = true;
@@ -49,9 +48,10 @@
             // 
             // textBox_PlayerName
             // 
-            textBox_PlayerName.Location = new Point(263, 316);
+            textBox_PlayerName.Location = new Point(394, 474);
+            textBox_PlayerName.Margin = new Padding(4, 4, 4, 4);
             textBox_PlayerName.Name = "textBox_PlayerName";
-            textBox_PlayerName.Size = new Size(305, 27);
+            textBox_PlayerName.Size = new Size(456, 35);
             textBox_PlayerName.TabIndex = 1;
             textBox_PlayerName.Text = "Player1";
             // 
@@ -60,39 +60,38 @@
             label_PlayerName.BackColor = Color.Black;
             label_PlayerName.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label_PlayerName.ForeColor = SystemColors.ButtonHighlight;
-            label_PlayerName.Location = new Point(263, 286);
+            label_PlayerName.Location = new Point(394, 429);
+            label_PlayerName.Margin = new Padding(4, 0, 4, 0);
             label_PlayerName.Name = "label_PlayerName";
-            label_PlayerName.Size = new Size(148, 27);
+            label_PlayerName.Size = new Size(222, 40);
             label_PlayerName.TabIndex = 2;
             label_PlayerName.Text = "Player Name";
             // 
-            // button1
+            // button_Top_Scores
             // 
-            button1.FlatStyle = FlatStyle.Popup;
-            button1.Location = new Point(796, 35);
-            button1.Margin = new Padding(2);
-            button1.Name = "button1";
-            button1.Size = new Size(137, 39);
-            button1.TabIndex = 3;
-            button1.Text = "Top Scores";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            button_Top_Scores.FlatStyle = FlatStyle.Popup;
+            button_Top_Scores.Location = new Point(1194, 52);
+            button_Top_Scores.Name = "button_Top_Scores";
+            button_Top_Scores.Size = new Size(206, 58);
+            button_Top_Scores.TabIndex = 3;
+            button_Top_Scores.Text = "Top Scores";
+            button_Top_Scores.UseVisualStyleBackColor = true;
+            button_Top_Scores.Click += button_Top_Scores_Click;
             // 
             // HomeScreen
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.background_home;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(944, 510);
-            Controls.Add(button1);
+            ClientSize = new Size(1416, 765);
+            Controls.Add(button_Top_Scores);
             Controls.Add(label_PlayerName);
             Controls.Add(textBox_PlayerName);
             Controls.Add(button_start_game);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.Fixed3D;
             Icon = (Icon)resources.GetObject("$this.Icon");
-            Margin = new Padding(2);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "HomeScreen";
@@ -107,6 +106,6 @@
         private Button button_start_game;
         private TextBox textBox_PlayerName;
         private Label label_PlayerName;
-        private Button button1;
+        private Button button_Top_Scores;
     }
 }

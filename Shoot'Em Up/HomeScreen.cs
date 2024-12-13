@@ -14,7 +14,7 @@ namespace Shoot_Em_Up
             form.Show();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button_Top_Scores_Click(object sender, EventArgs e)
         {
             TopScores newTopScoresWindow = new TopScores();
             newTopScoresWindow.Show();
