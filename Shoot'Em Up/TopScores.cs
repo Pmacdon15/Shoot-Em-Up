@@ -33,7 +33,7 @@ namespace Shoot_Em_Up
     public partial class TopScores : Form
     {
         string currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string connectionString;
+        string connectionString="";
 
 
         //ConfigurationManager.AppSettings["connectionString"];
